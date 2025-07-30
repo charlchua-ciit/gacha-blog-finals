@@ -10,5 +10,13 @@ class PostGameTag extends Pivot
     public $timestamps = false;
 
     protected $fillable = ['post_id', 'tag_id'];
+
+    public function post() {
+        return $this->belongsTo(Post::class, 'post_id');
+    }
+
+    public function gameTag() {
+        return $this->belongsTo(GameTag::class, 'tag_id');
+    }
 }
 

@@ -2,13 +2,28 @@
 
 namespace Database\Seeders;
 
-use App\Models\GameTag;
 use Illuminate\Database\Seeder;
+use App\Models\GameTag;
 
 class GameTagSeeder extends Seeder
 {
-    public function run()
+    public function run(): void
     {
-        GameTag::factory(10)->create();
+        $tags = [
+            'Genshin Impact',
+            'Honkai: Star Rail',
+            'Blue Archive',
+            'Nikke: Goddess of Victory',
+            'Arknights',
+            'Fate/Grand Order',
+            'Azur Lane',
+            'Epic Seven',
+            'Punishing: Gray Raven',
+            'Reverse: 1999',
+        ];
+
+        foreach ($tags as $tag) {
+            GameTag::create(['tag_name' => $tag]);
+        }
     }
 }

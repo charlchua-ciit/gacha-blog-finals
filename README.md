@@ -1,61 +1,223 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# GachaBlog
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A modern blog platform for gacha gaming enthusiasts. Share your pulls, discuss strategies, and connect with fellow gamers across popular gacha titles like Genshin Impact, Honkai: Star Rail, Blue Archive, and more.
 
-## About Laravel
+## 🎮 Features
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- **Modern UI** with dark/light mode toggle
+- **Game-specific tags** for organizing content
+- **User authentication** and profiles
+- **Post creation** and management
+- **Like/Comment system** for engagement
+- **Follow system** to connect with other users
+- **Responsive design** for mobile and desktop
+- **Real-time notifications**
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 🛠️ Tech Stack
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- **Backend:** Laravel 12 (PHP 8.4+)
+- **Frontend:** Blade templates with custom CSS
+- **Database:** SQLite (for development)
+- **Build Tool:** Vite
+- **Styling:** Custom CSS with CSS variables
 
-## Learning Laravel
+## 📋 Prerequisites
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Before running this project, make sure you have:
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+- **PHP 8.4 or higher**
+- **Composer** (PHP package manager)
+- **Node.js 18+** and **npm**
+- **Git**
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## 🚀 Installation & Setup
 
-## Laravel Sponsors
+### 1. Clone the Repository
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+```bash
+git clone <repository-url>
+cd gacha-blog-finals
+```
 
-### Premium Partners
+### 2. Install PHP Dependencies
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+```bash
+composer install
+```
 
-## Contributing
+### 3. Install Node.js Dependencies
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```bash
+npm install
+```
 
-## Code of Conduct
+### 4. Environment Setup
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Copy the environment file:
+```bash
+cp .env.example .env
+```
 
-## Security Vulnerabilities
+Generate application key:
+```bash
+php artisan key:generate
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### 5. Database Setup
 
-## License
+Create the SQLite database:
+```bash
+# For Windows Command Prompt/PowerShell:
+type nul > database/database.sqlite
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+# For Unix/Linux/Mac:
+touch database/database.sqlite
+```
+
+Run migrations and seed the database:
+```bash
+php artisan migrate:fresh --seed
+```
+
+This will create:
+- All necessary database tables
+- Sample users and posts
+- Game tags (Genshin Impact, Honkai: Star Rail, etc.)
+- Sample relationships between posts and tags
+
+### 6. Build Frontend Assets
+
+For development (with hot reload):
+```bash
+npm run dev
+```
+
+For production:
+```bash
+npm run build
+```
+
+### 7. Start the Development Server
+
+```bash
+php artisan serve
+```
+
+Your application will be available at: **http://localhost:8000**
+
+## 🎯 Available Routes
+
+- **Home:** `/` - Welcome page
+- **Posts:** `/posts` - View all posts
+- **Users:** `/users` - View all users
+
+## 🎨 UI Features
+
+### Dark/Light Mode
+- Toggle between themes using the moon/sun button in the navbar
+- Theme preference is saved in localStorage
+
+### Responsive Design
+- Mobile-friendly sidebar that slides in/out
+- Optimized layouts for different screen sizes
+
+### Game Tags
+The platform includes tags for popular gacha games:
+- Genshin Impact
+- Honkai: Star Rail
+- Blue Archive
+- Nikke: Goddess of Victory
+- Arknights
+- Fate/Grand Order
+- Azur Lane
+- Epic Seven
+- Punishing: Gray Raven
+- Reverse: 1999
+
+## 🗄️ Database Structure
+
+### Models & Relationships
+- **Users** - can create posts, comments, likes, follow others
+- **Posts** - belong to users, have comments, likes, and game tags
+- **Comments** - belong to users and posts
+- **Likes** - connect users to posts
+- **Follows** - user-to-user relationships
+- **GameTags** - many-to-many with posts
+- **Notifications** - belong to users
+
+## 🔧 Development
+
+### Adding New Features
+1. Create migrations: `php artisan make:migration create_table_name`
+2. Update models with relationships
+3. Create controllers: `php artisan make:controller ControllerName`
+4. Add routes in `routes/web.php`
+5. Create Blade views in `resources/views/`
+
+### Styling
+- Main styles: `resources/css/app.css`
+- Uses CSS variables for theming
+- Responsive design with mobile-first approach
+
+### Database Changes
+```bash
+# Create new migration
+php artisan make:migration add_column_to_table
+
+# Run migrations
+php artisan migrate
+
+# Reset and reseed
+php artisan migrate:fresh --seed
+```
+
+## 🐛 Troubleshooting
+
+### Common Issues
+
+**"No application encryption key"**
+```bash
+php artisan key:generate
+```
+
+**"Database file does not exist"**
+```bash
+# Create SQLite database file
+type nul > database/database.sqlite  # Windows
+touch database/database.sqlite       # Unix/Linux/Mac
+php artisan migrate
+```
+
+**"Vite manifest not found"**
+```bash
+npm run dev    # For development
+npm run build  # For production
+```
+
+**"No such table: sessions"**
+```bash
+php artisan migrate:fresh --seed
+```
+
+## 📝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
+
+## 📄 License
+
+This project is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+## 🤝 Support
+
+If you encounter any issues or have questions:
+1. Check the troubleshooting section above
+2. Review Laravel documentation: https://laravel.com/docs
+3. Create an issue in the repository
+
+---
+
+**Happy gaming and blogging! 🎮✨**

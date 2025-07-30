@@ -14,13 +14,17 @@ class PostGameTagSeeder extends Seeder
         $posts = Post::all();
         $tags = GameTag::all();
 
-        foreach ($posts as $post) {
-            $tagIds = $tags->random(rand(1, 3))->pluck('id');
-            foreach ($tagIds as $tagId) {
-                DB::table('post_game_tags')->insertOrIgnore([
-                    'post_id' => $post->id,
-                    'tag_id' => $tagId,
-                ]);
+        if ($posts->count() > 0 && $tags->count() > 0) {
+            foreach ($posts as $post) {
+                $tagIds = $tags->random(rand(1, min(3, $tags->count())))->pluck('id');
+                foreach ($tagIds as $tagId) {
+                    DB::table('post_game_tags')->insertOrIgnore([
+                        'post_id' => $post->id,
+                        'tag_id' => $tagId,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]);
+                }
             }
         }
     }

@@ -12,6 +12,7 @@ class User extends Authenticatable
     use HasFactory;
 
     protected $fillable = ['username', 'email', 'password'];
+    protected $hidden = ['password', 'remember_token'];
 
     public function posts() {
         return $this->hasMany(Post::class);
@@ -35,5 +36,9 @@ class User extends Authenticatable
 
     public function following() {
         return $this->belongsToMany(User::class, 'follows', 'follower_id', 'followee_id');
+    }
+
+    public function getRouteKeyName() {
+        return 'username';
     }
 }

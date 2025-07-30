@@ -10,16 +10,17 @@
     @vite('resources/css/app.css')
     @vite('resources/js/app.js')
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
-<body class="light-theme">
+<body class="dark-theme">
     <!-- Modern Navbar -->
     <header class="navbar">
         <div class="navbar-container">
             <div class="navbar-brand">
                 <div class="navbar-logo">
                     <i class="fas fa-gamepad"></i>
-                    <span>GachaBlog</span>
                 </div>
+                <span class="brand-text">GachaBlog</span>
             </div>
             
             <nav class="navbar-links">
@@ -101,13 +102,13 @@
                     </div>
                 @else
                     <div class="auth-card">
-                        <div class="auth-title">Welcome to GachaBlog</div>
+                        <h2 class="auth-title">Welcome to GachaBlog</h2>
                         <div class="auth-actions">
-                            <a href="{{ route('login') }}" class="btn btn-outline">
+                            <a href="{{ route('login') }}" class="btn btn-primary">
                                 <i class="fas fa-sign-in-alt"></i>
                                 <span>Login</span>
                             </a>
-                            <a href="{{ route('register') }}" class="btn btn-primary">
+                            <a href="{{ route('register') }}" class="btn btn-outline">
                                 <i class="fas fa-user-plus"></i>
                                 <span>Register</span>
                             </a>
@@ -115,186 +116,143 @@
                     </div>
                 @endauth
             </div>
-
+            
             <div class="sidebar-section">
                 <div class="section-title">
                     <i class="fas fa-tags"></i>
                     <span>Game Tags</span>
                 </div>
-                <div class="tags-grid">
-                    @isset($tags)
-                        @foreach($tags as $tag)
-                            <a href="{{ route('posts.byTag', $tag) }}" class="tag-chip">
-                                <i class="fas fa-gamepad"></i>
-                                <span>{{ $tag->tag_name }}</span>
-                            </a>
-                        @endforeach
-                    @else
-                        <a href="{{ route('posts.index') }}" class="tag-chip">
-                            <i class="fas fa-list"></i>
-                            <span>All Posts</span>
+                <div class="game-tags-container">
+                    @foreach(App\Models\GameTag::all() as $tag)
+                        <a href="{{ route('posts.byTag', $tag->tag_name) }}" class="game-tag-item">
+                            <i class="fas fa-gamepad"></i>
+                            <span>{{ $tag->tag_name }}</span>
                         </a>
-                    @endisset
+                    @endforeach
                 </div>
             </div>
-
+            
             <div class="sidebar-section">
                 <div class="section-title">
                     <i class="fas fa-bell"></i>
                     <span>Notifications</span>
                 </div>
                 <div class="notifications-list">
-                    @isset($notifications)
-                        @forelse($notifications as $notif)
+                    @auth
+                        @forelse(Auth::user()->notifications()->latest()->take(5)->get() as $notification)
                             <div class="notification-item">
                                 <i class="fas fa-info-circle"></i>
-                                <span>{{ $notif->message }}</span>
+                                <span>{{ $notification->message }}</span>
                             </div>
                         @empty
                             <div class="notification-empty">
-                                <i class="fas fa-check-circle"></i>
-                                <span>All caught up!</span>
+                                <i class="fas fa-bell-slash"></i>
+                                <span>No notifications</span>
                             </div>
                         @endforelse
                     @else
                         <div class="notification-empty">
                             <i class="fas fa-bell-slash"></i>
-                            <span>No notifications</span>
+                            <span>Login to see notifications</span>
                         </div>
-                    @endisset
+                    @endauth
                 </div>
             </div>
         </aside>
 
         <!-- Main Content -->
         <main class="main-content">
+            @if(session('success'))
+                <div class="success fade-in">
+                    <i class="fas fa-check-circle"></i>
+                    <span>{{ session('success') }}</span>
+                </div>
+            @endif
+
+            @if(session('error'))
+                <div class="error fade-in">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span>{{ session('error') }}</span>
+                </div>
+            @endif
+
+            @if($errors->any())
+                <div class="error fade-in">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <ul>
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
             @yield('content')
         </main>
     </div>
 
-    <style>
-        /* Enhanced Game Tag Styling */
-        .game-tag-link {
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
-            color: var(--primary);
-            text-decoration: none;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            border: 1px solid rgba(99, 102, 241, 0.2);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .game-tag-link::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.5s;
-        }
-        
-        .game-tag-link:hover {
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.2));
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.3);
-            border-color: var(--primary);
-        }
-        
-        .game-tag-link:hover::before {
-            left: 100%;
-        }
-
-        /* Loading Animation */
-        .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(99, 102, 241, 0.3);
-            border-radius: 50%;
-            border-top-color: var(--primary);
-            animation: spin 1s ease-in-out infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* Smooth Scrolling */
-        html {
-            scroll-behavior: smooth;
-        }
-
-        /* Focus Styles */
-        .btn:focus,
-        .nav-link:focus,
-        .sidebar-link:focus {
-            outline: 2px solid var(--primary);
-            outline-offset: 2px;
-        }
-    </style>
+    <!-- Sidebar Overlay for Mobile -->
+    <div id="sidebarOverlay" class="sidebar-overlay"></div>
 
     <script>
-        // Enhanced Sidebar Toggle
-        document.getElementById('sidebarToggle').onclick = function() {
-            const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('sidebar-open');
-            
-            // Add overlay for mobile
-            if (sidebar.classList.contains('sidebar-open')) {
-                const overlay = document.createElement('div');
-                overlay.className = 'sidebar-overlay';
-                overlay.onclick = () => {
-                    sidebar.classList.remove('sidebar-open');
-                    overlay.remove();
-                };
-                document.body.appendChild(overlay);
-            } else {
-                const overlay = document.querySelector('.sidebar-overlay');
-                if (overlay) overlay.remove();
-            }
-        };
-
-        // Enhanced Dark Mode Toggle
+        // Dark mode toggle
         const darkModeToggle = document.getElementById('darkModeToggle');
         const body = document.body;
         
-        function setTheme(theme) {
-            if (theme === 'dark') {
-                body.classList.add('dark-theme');
-                body.classList.remove('light-theme');
-                darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
-            } else {
-                body.classList.add('light-theme');
+        // Check for saved theme preference or default to dark
+        const currentTheme = localStorage.getItem('theme') || 'dark';
+        body.className = currentTheme === 'dark' ? 'dark-theme' : 'light-theme';
+        
+        darkModeToggle.addEventListener('click', () => {
+            if (body.classList.contains('dark-theme')) {
                 body.classList.remove('dark-theme');
-                darkModeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+                body.classList.add('light-theme');
+                localStorage.setItem('theme', 'light');
+                darkModeToggle.querySelector('i').className = 'fas fa-sun';
+            } else {
+                body.classList.remove('light-theme');
+                body.classList.add('dark-theme');
+                localStorage.setItem('theme', 'dark');
+                darkModeToggle.querySelector('i').className = 'fas fa-moon';
             }
-            localStorage.setItem('theme', theme);
+        });
+        
+        // Update icon on load
+        if (currentTheme === 'dark') {
+            darkModeToggle.querySelector('i').className = 'fas fa-sun';
+        } else {
+            darkModeToggle.querySelector('i').className = 'fas fa-moon';
         }
-        
-        darkModeToggle.onclick = function() {
-            const isDark = body.classList.contains('dark-theme');
-            setTheme(isDark ? 'light' : 'dark');
-            
-            // Add animation
-            this.style.transform = 'rotate(360deg)';
-            setTimeout(() => {
-                this.style.transform = 'rotate(0deg)';
-            }, 300);
-        };
-        
-        // Set theme on load
-        setTheme(localStorage.getItem('theme') || 'light');
 
-        // Smooth page transitions
-        document.addEventListener('DOMContentLoaded', function() {
-            document.body.style.opacity = '0';
-            document.body.style.transition = 'opacity 0.3s ease';
-            
-            setTimeout(() => {
-                document.body.style.opacity = '1';
-            }, 100);
+        // Sidebar toggle for mobile
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        
+        sidebarToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('sidebar-open');
+            sidebarOverlay.classList.toggle('active');
+        });
+        
+        sidebarOverlay.addEventListener('click', () => {
+            sidebar.classList.remove('sidebar-open');
+            sidebarOverlay.classList.remove('active');
+        });
+
+        // Close sidebar on window resize
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 1024) {
+                sidebar.classList.remove('sidebar-open');
+                sidebarOverlay.classList.remove('active');
+            }
+        });
+
+        // Add fade-in animation to content
+        document.addEventListener('DOMContentLoaded', () => {
+            const content = document.querySelector('.main-content');
+            if (content) {
+                content.classList.add('fade-in');
+            }
         });
     </script>
 </body>

@@ -94,7 +94,22 @@
                         
                         <div class="post-content">
                             <h3 class="post-title">{{ $post->title }}</h3>
-                            <p class="post-excerpt">{{ Str::limit($post->content, 200) }}</p>
+                            <div class="post-excerpt-container">
+                                @if(strlen($post->content) > 200)
+                                    <p class="post-excerpt" id="user-likes-excerpt-{{ $post->id }}">
+                                        {{ Str::limit($post->content, 200) }}
+                                    </p>
+                                    <p class="post-full-content" id="user-likes-full-{{ $post->id }}" style="display: none;">
+                                        {{ $post->content }}
+                                    </p>
+                                    <button class="see-more-btn" onclick="toggleUserLikesContent({{ $post->id }})" id="user-likes-toggle-{{ $post->id }}">
+                                        <i class="fas fa-chevron-down"></i>
+                                        <span>See more</span>
+                                    </button>
+                                @else
+                                    <p class="post-excerpt">{{ $post->content }}</p>
+                                @endif
+                            </div>
                         </div>
                         
                         @if($post->gameTags->count() > 0)
@@ -192,6 +207,29 @@
 </div>
 
 <script>
+// Toggle content function for user likes "See more" feature
+function toggleUserLikesContent(postId) {
+    const excerpt = document.getElementById(`user-likes-excerpt-${postId}`);
+    const fullContent = document.getElementById(`user-likes-full-${postId}`);
+    const toggleBtn = document.getElementById(`user-likes-toggle-${postId}`);
+    const icon = toggleBtn.querySelector('i');
+    const text = toggleBtn.querySelector('span');
+    
+    if (fullContent.style.display === 'none') {
+        // Show full content
+        excerpt.style.display = 'none';
+        fullContent.style.display = 'block';
+        icon.className = 'fas fa-chevron-up';
+        text.textContent = 'See less';
+    } else {
+        // Show excerpt
+        excerpt.style.display = 'block';
+        fullContent.style.display = 'none';
+        icon.className = 'fas fa-chevron-down';
+        text.textContent = 'See more';
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     // Like functionality
     const likeButtons = document.querySelectorAll('.like-btn');

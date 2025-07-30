@@ -62,7 +62,7 @@
         
         <div class="stat-card">
             <div class="stat-icon">
-                <i class="fas fa-heart-broken"></i>
+                <i class="fas fa-thumbs-up"></i>
             </div>
             <div class="stat-content">
                 <div class="stat-number">{{ $stats['likes_received'] }}</div>
@@ -155,7 +155,22 @@
                         
                         <div class="post-content">
                             <h3 class="post-title">{{ $post->title }}</h3>
-                            <p class="post-excerpt">{{ Str::limit($post->content, 150) }}</p>
+                            <div class="post-excerpt-container">
+                                @if(strlen($post->content) > 150)
+                                    <p class="post-excerpt" id="profile-posts-excerpt-{{ $post->id }}">
+                                        {{ Str::limit($post->content, 150) }}
+                                    </p>
+                                    <p class="post-full-content" id="profile-posts-full-{{ $post->id }}" style="display: none;">
+                                        {{ $post->content }}
+                                    </p>
+                                    <button class="see-more-btn" onclick="toggleProfilePostsContent({{ $post->id }})" id="profile-posts-toggle-{{ $post->id }}">
+                                        <i class="fas fa-chevron-down"></i>
+                                        <span>See more</span>
+                                    </button>
+                                @else
+                                    <p class="post-excerpt">{{ $post->content }}</p>
+                                @endif
+                            </div>
                         </div>
                         
                         @if($post->gameTags->count() > 0)
@@ -242,7 +257,22 @@
                             
                             <div class="post-content">
                                 <h3 class="post-title">{{ $post->title }}</h3>
-                                <p class="post-excerpt">{{ Str::limit($post->content, 150) }}</p>
+                                <div class="post-excerpt-container">
+                                    @if(strlen($post->content) > 150)
+                                        <p class="post-excerpt" id="profile-liked-excerpt-{{ $post->id }}">
+                                            {{ Str::limit($post->content, 150) }}
+                                        </p>
+                                        <p class="post-full-content" id="profile-liked-full-{{ $post->id }}" style="display: none;">
+                                            {{ $post->content }}
+                                        </p>
+                                        <button class="see-more-btn" onclick="toggleProfileLikedContent({{ $post->id }})" id="profile-liked-toggle-{{ $post->id }}">
+                                            <i class="fas fa-chevron-down"></i>
+                                            <span>See more</span>
+                                        </button>
+                                    @else
+                                        <p class="post-excerpt">{{ $post->content }}</p>
+                                    @endif
+                                </div>
                             </div>
                             
                             @if($post->gameTags->count() > 0)
@@ -341,6 +371,52 @@
 </div>
 
 <script>
+// Toggle content function for profile posts "See more" feature
+function toggleProfilePostsContent(postId) {
+    const excerpt = document.getElementById(`profile-posts-excerpt-${postId}`);
+    const fullContent = document.getElementById(`profile-posts-full-${postId}`);
+    const toggleBtn = document.getElementById(`profile-posts-toggle-${postId}`);
+    const icon = toggleBtn.querySelector('i');
+    const text = toggleBtn.querySelector('span');
+    
+    if (fullContent.style.display === 'none') {
+        // Show full content
+        excerpt.style.display = 'none';
+        fullContent.style.display = 'block';
+        icon.className = 'fas fa-chevron-up';
+        text.textContent = 'See less';
+    } else {
+        // Show excerpt
+        excerpt.style.display = 'block';
+        fullContent.style.display = 'none';
+        icon.className = 'fas fa-chevron-down';
+        text.textContent = 'See more';
+    }
+}
+
+// Toggle content function for profile liked posts "See more" feature
+function toggleProfileLikedContent(postId) {
+    const excerpt = document.getElementById(`profile-liked-excerpt-${postId}`);
+    const fullContent = document.getElementById(`profile-liked-full-${postId}`);
+    const toggleBtn = document.getElementById(`profile-liked-toggle-${postId}`);
+    const icon = toggleBtn.querySelector('i');
+    const text = toggleBtn.querySelector('span');
+    
+    if (fullContent.style.display === 'none') {
+        // Show full content
+        excerpt.style.display = 'none';
+        fullContent.style.display = 'block';
+        icon.className = 'fas fa-chevron-up';
+        text.textContent = 'See less';
+    } else {
+        // Show excerpt
+        excerpt.style.display = 'block';
+        fullContent.style.display = 'none';
+        icon.className = 'fas fa-chevron-down';
+        text.textContent = 'See more';
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     // Like functionality
     const likeButtons = document.querySelectorAll('.like-btn');

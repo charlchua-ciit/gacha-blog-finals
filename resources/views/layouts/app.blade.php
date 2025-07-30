@@ -25,24 +25,24 @@
             </div>
             
             <nav class="navbar-links">
-                <a href="{{ route('home') }}" class="nav-link">
+                <a href="{{ route('home') }}" class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}">
                     <i class="fas fa-home"></i>
                     <span>Home</span>
                 </a>
-                <a href="{{ route('posts.index') }}" class="nav-link">
+                <a href="{{ route('posts.index') }}" class="nav-link {{ request()->routeIs('posts.*') ? 'active' : '' }}">
                     <i class="fas fa-stream"></i>
                     <span>Posts</span>
                 </a>
-                <a href="{{ route('users') }}" class="nav-link">
+                <a href="{{ route('users') }}" class="nav-link {{ request()->routeIs('users') ? 'active' : '' }}">
                     <i class="fas fa-users"></i>
                     <span>Users</span>
                 </a>
                 @auth
-                    <a href="{{ route('dashboard') }}" class="nav-link">
+                    <a href="{{ route('dashboard') }}" class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
                         <i class="fas fa-tachometer-alt"></i>
                         <span>Dashboard</span>
                     </a>
-                    <a href="{{ route('posts.create') }}" class="btn btn-primary">
+                    <a href="{{ route('posts.create') }}" class="btn btn-primary hover-lift">
                         <i class="fas fa-plus"></i>
                         <span>Create Post</span>
                     </a>
@@ -85,6 +85,10 @@
                         </div>
                     </div>
                     <div class="profile-actions">
+                        <a href="{{ route('user.profile', Auth::user()->username) }}" class="sidebar-link">
+                            <i class="fas fa-user-circle"></i>
+                            <span>View Profile</span>
+                        </a>
                         <a href="{{ route('profile.edit') }}" class="sidebar-link">
                             <i class="fas fa-user-edit"></i>
                             <span>Edit Profile</span>
@@ -124,7 +128,7 @@
                     <span>Game Tags</span>
                 </div>
                 <div class="game-tags-container">
-                    @foreach(App\Models\GameTag::all() as $tag)
+                    @foreach(App\Models\GameTag::orderBy('tag_name', 'asc')->get() as $tag)
                         <a href="{{ route('posts.byTag', $tag->tag_name) }}" class="game-tag-item">
                             <i class="fas fa-gamepad"></i>
                             <span>{{ $tag->tag_name }}</span>

@@ -6,9 +6,8 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 
 class PostGameTag extends Pivot
 {
-    protected $table = 'post_game_tag';
-    public $timestamps = false;
-
+    protected $table = 'post_game_tags';
+    public $timestamps = true;
     protected $fillable = ['post_id', 'tag_id'];
 
     public function post() {

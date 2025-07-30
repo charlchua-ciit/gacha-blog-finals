@@ -24,7 +24,15 @@ class Post extends Model
     }
 
     public function gameTags() {
-        return $this->belongsToMany(GameTag::class, 'post_game_tag', 'post_id', 'tag_id');
+        return $this->belongsToMany(GameTag::class, 'post_game_tags', 'post_id', 'tag_id');
+    }
+
+    public function scopeWithRelations($query) {
+        return $query->with(['user', 'gameTags', 'comments.user', 'likes']);
+    }
+
+    public function getRouteKeyName() {
+        return 'id';
     }
 }
 

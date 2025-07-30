@@ -5,6 +5,20 @@
     <div class="header-content">
         <h1>Gaming Posts</h1>
         <p>Discover amazing gaming content from the community</p>
+        
+        @if(isset($tag))
+            <div class="tag-filter">
+                <span class="filter-label">Filtered by:</span>
+                <span class="current-tag">
+                    <i class="fas fa-gamepad"></i>
+                    {{ $tag->tag_name }}
+                </span>
+                <a href="{{ route('posts.index') }}" class="clear-filter">
+                    <i class="fas fa-times"></i>
+                    Clear Filter
+                </a>
+            </div>
+        @endif
     </div>
 </div>
 

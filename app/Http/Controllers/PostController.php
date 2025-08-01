@@ -6,6 +6,7 @@ use App\Models\Post;
 use App\Models\GameTag;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 
@@ -78,8 +79,21 @@ class PostController extends Controller
                 $post->gameTags()->attach($request->game_tags);
             }
 
+            Log::info('Post created', [
+                'user_id' => Auth::id(),
+                'username' => Auth::user()->username,
+                'post_id' => $post->id,
+                'content_length' => strlen($request->content),
+                'game_tags_count' => $request->has('game_tags') ? count($request->game_tags) : 0
+            ]);
+
             return redirect()->route('posts.show', $post)->with('success', 'Post created successfully!');
         } catch (\Exception $e) {
+            Log::error('Error creating post', [
+                'user_id' => Auth::id(),
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
             return back()->withInput()->withErrors(['error' => 'Failed to create post. Please try again.']);
         }
     }
@@ -117,6 +131,11 @@ class PostController extends Controller
     public function update(Request $request, Post $post): RedirectResponse
     {
         if (Auth::id() !== $post->user_id) {
+            Log::warning('Unauthorized post update attempt', [
+                'user_id' => Auth::id(),
+                'post_id' => $post->id,
+                'post_owner' => $post->user_id
+            ]);
             abort(403, 'Unauthorized action.');
         }
 
@@ -132,6 +151,14 @@ class PostController extends Controller
 
         $post->gameTags()->sync($request->game_tags ?? []);
 
+        Log::info('Post updated', [
+            'user_id' => Auth::id(),
+            'username' => Auth::user()->username,
+            'post_id' => $post->id,
+            'content_length' => strlen($request->content),
+            'game_tags_count' => $request->has('game_tags') ? count($request->game_tags) : 0
+        ]);
+
         return redirect()->route('posts.show', $post)->with('success', 'Post updated successfully!');
     }
 
@@ -141,10 +168,25 @@ class PostController extends Controller
     public function destroy(Post $post): RedirectResponse
     {
         if (Auth::id() !== $post->user_id) {
+            Log::warning('Unauthorized post deletion attempt', [
+                'user_id' => Auth::id(),
+                'post_id' => $post->id,
+                'post_owner' => $post->user_id
+            ]);
             abort(403, 'Unauthorized action.');
         }
 
+        $postId = $post->id;
+        $postAuthor = $post->user->username ?? 'Unknown';
+        
         $post->delete();
+
+        Log::info('Post deleted', [
+            'user_id' => Auth::id(),
+            'username' => Auth::user()->username,
+            'post_id' => $postId,
+            'post_author' => $postAuthor
+        ]);
 
         return redirect()->route('posts.index')->with('success', 'Post deleted successfully!');
     }

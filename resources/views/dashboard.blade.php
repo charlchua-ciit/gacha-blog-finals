@@ -53,7 +53,22 @@
                             </div>
                         </div>
                         <div class="post-content">
-                            {{ Str::limit($post->content, 150) }}
+                            <div class="post-excerpt-container">
+                                @if(strlen($post->content) > 150)
+                                    <p class="post-excerpt" id="dashboard-excerpt-{{ $post->id }}">
+                                        {{ Str::limit($post->content, 150) }}
+                                    </p>
+                                    <p class="post-full-content" id="dashboard-full-{{ $post->id }}" style="display: none;">
+                                        {{ $post->content }}
+                                    </p>
+                                    <button class="see-more-btn" onclick="toggleDashboardContent({{ $post->id }})" id="dashboard-toggle-{{ $post->id }}">
+                                        <i class="fas fa-chevron-down"></i>
+                                        <span>See more</span>
+                                    </button>
+                                @else
+                                    <p class="post-excerpt">{{ $post->content }}</p>
+                                @endif
+                            </div>
                         </div>
                         @if($post->gameTags && $post->gameTags->count() > 0)
                             <div style="margin-top: 0.75rem;">
@@ -81,4 +96,29 @@
         <a href="{{ route('posts.create') }}" class="btn">Create Your First Post</a>
     </div>
 @endif
+
+<script>
+// Toggle content function for dashboard "See more" feature
+function toggleDashboardContent(postId) {
+    const excerpt = document.getElementById(`dashboard-excerpt-${postId}`);
+    const fullContent = document.getElementById(`dashboard-full-${postId}`);
+    const toggleBtn = document.getElementById(`dashboard-toggle-${postId}`);
+    const icon = toggleBtn.querySelector('i');
+    const text = toggleBtn.querySelector('span');
+    
+    if (fullContent.style.display === 'none') {
+        // Show full content
+        excerpt.style.display = 'none';
+        fullContent.style.display = 'block';
+        icon.className = 'fas fa-chevron-up';
+        text.textContent = 'See less';
+    } else {
+        // Show excerpt
+        excerpt.style.display = 'block';
+        fullContent.style.display = 'none';
+        icon.className = 'fas fa-chevron-down';
+        text.textContent = 'See more';
+    }
+}
+</script>
 @endsection
